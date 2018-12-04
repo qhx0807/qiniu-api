@@ -30,6 +30,7 @@ module.exports = class extends Base {
   }
 
   async domainAction () {
+    const bucketName = this.get('bucket')
     const result = await this.bucketService.domainList(bucketName)
     return this.success(result)
   }

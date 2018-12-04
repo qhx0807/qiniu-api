@@ -1,5 +1,5 @@
 module.exports = class extends think.Logic {
-  indexAction() {
+  indexAction () {
 
   }
 
@@ -20,5 +20,15 @@ module.exports = class extends think.Logic {
 
   createActio () {
     this.allowMethods = 'post'
+  }
+
+  dropAction () {
+    this.allowMethods = 'get, post'
+    this.rules = {
+      name: {
+        required: true,
+        string: true,
+      }
+    }
   }
 };
