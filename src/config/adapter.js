@@ -5,6 +5,7 @@ const JWTSession = require('think-session-jwt');
 const mysql = require('think-model-mysql');
 const {Console, File, DateFile} = require('think-logger3');
 const path = require('path');
+const dbConfig = require('./db.config')
 const isDev = think.env === 'development';
 
 /**
@@ -37,14 +38,7 @@ exports.model = {
   },
   mysql: {
     handle: mysql,
-    database: 'bing',
-    prefix: '',
-    encoding: 'utf8',
-    host: '127.0.0.1',
-    port: '3306',
-    user: 'root',
-    password: 'qhx0807',
-    dateStrings: true
+    ...dbConfig
   }
 };
 
