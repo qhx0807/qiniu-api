@@ -1,7 +1,7 @@
 module.exports = class extends think.Logic {
-  indexAction() {
+  async indexAction () {
     this.allowMethods = 'post'
-    let rules = {
+    this.rules = {
       username: {
         string: true,
         required: true,
@@ -11,10 +11,6 @@ module.exports = class extends think.Logic {
         string: true,
         required: true
       }
-    }
-    let flag = this.validate(rules)
-    if(!flag){
-      return this.fail('validate error', this.validateErrors)
     }
   }
 };
