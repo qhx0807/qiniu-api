@@ -5,19 +5,16 @@ module.exports = class extends Base {
 
   constructor(ctx){
     super(ctx)
-    this.qiniu_Mac = {
-      "accessKey": "_iCkoUSbXhnN8AF8T8Mi1qBr-6z47dk-0iQs0C_r",
-      "secretKey": "c7raaxbjXxadIaSU4PfSuMJMw1ICaoJuEjqXoW4-"
-    }
-    this.bucketService = think.service('bucket', this.qiniu_Mac)
+    this.qiniu_Mac = null
   }
 
   async __before () {
-    // const userInfo = await this.session('userInfo')
-    // if (think.isEmpty(userInfo)) return this.fail(401, '请登录')
-    // if (userInfo.accesskey && userInfo.secretkey) {
-    //   this.qiniu_Mac = new qiniu.auth.digest.Mac(userInfo.accesskey, userInfo.secretkey)
-    // }
+    const userInfo = await this.session('userInfo')
+    if (think.isEmpty(userInfo)) return this.fail(401, '请登录')
+    if (userInfo.accesskey && userInfo.secretkey) {
+      this.qiniu_Mac = new qiniu.auth.digest.Mac(userInfo.accesskey, userInfo.secretkey)
+      this.bucketService = think.service('bucket', this.qiniu_Mac)
+    }
   }
 
   indexAction () {
@@ -25,7 +22,7 @@ module.exports = class extends Base {
   }
 
   async bucketsAction () {
-    const result = await this.bucketService.getBUcketsList()
+    const result = await this.bucketService.getBucketsList()
     return this.success(result)
   }
 

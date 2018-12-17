@@ -3,18 +3,20 @@ const qiniu = require('qiniu')
 module.exports = class extends think.Service {
 
   constructor(mac) {
-    super()
+    super(mac)
     this.mac = mac
     this.HostConfig = {
       host_1: 'http://rs.qbox.me',
       host_2: 'http://rs.qiniu.com',
       host_3: 'http://api.qiniu.com',
-      host_4: 'http://uc.qbox.me'
+      host_4: 'http://uc.qbox.me',
+      host_5: 'http://rsf.qbox.me'
     }
   }
 
-  async getBucketsList () {
-    const requestURI = this.HostConfig.host_1 + '/buckets'
+  async getObjectList (obj) {
+    const { bucket, limit = 10, prefix, marker } = obj
+    const requestURI = `${this.HostConfig.host_5}/list?bucket=${bucket}&limit=${limit}&prefix=${prefix}&maker=${marker}`
     const AccessToken = qiniu.util.generateAccessToken(this.mac, requestURI)
     try {
       return await this.fetch(requestURI, { headers: { Authorization: AccessToken } }).then(res => res.json())
@@ -23,8 +25,9 @@ module.exports = class extends think.Service {
     }
   }
 
-  async domainList (name) {
-    const requestURI = `${this.HostConfig.host_3}/v6/domain/list?tbl=${name}`
+  async getMetaInfo (bucket, key) {
+    const encodedEntryURI = qiniu.util.encodedEntry(bucket, key)
+    const requestURI = `${this.HostConfig.host_2}/stat/${encodedEntryURI}`
     const AccessToken = qiniu.util.generateAccessToken(this.mac, requestURI, '')
     try {
       return await this.fetch(requestURI, { headers: { Authorization: AccessToken } }).then(res => res.json())
@@ -33,8 +36,9 @@ module.exports = class extends think.Service {
     }
   }
 
-  async createBucket (name, region) {
-    const requestURI = `${this.Host_Config.host_2}/mkbucketv2/${name}/region/${region}`
+  async setLfiCycle (bucket, key, days) {
+    const encodedEntryURI = qiniu.util.encodedEntry(bucket, key)
+    const requestURI = `${this.HostConfig.host_2}/deleteAfterDays/${encodedEntryURI}/${days}`
     const AccessToken = qiniu.util.generateAccessToken(this.mac, requestURI, '')
     try {
       return await this.fetch(requestURI, { headers: { Authorization: AccessToken } }).then(res => res.json())
@@ -42,14 +46,4 @@ module.exports = class extends think.Service {
       return error.toString()
     }
   }
-
-  async dropBucket (name) {
-    const requestURI = `${this.Host_Config.host_2}/drop/${name}`
-    const AccessToken = qiniu.util.generateAccessToken(this.mac, requestURI, '')
-    try {
-      return await this.fetch(requestURI, { headers: { Authorization: AccessToken } }).then(res => res.json())
-    } catch (error) {
-      return error.toString()
-    }
-  }
-};
+}
