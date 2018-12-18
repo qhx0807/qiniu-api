@@ -6,6 +6,7 @@ module.exports = class extends Base {
   constructor (ctx) {
     super(ctx)
     this.qiniu_Mac = null
+    this.objectService = null
   }
 
   async __before () {
@@ -14,6 +15,8 @@ module.exports = class extends Base {
     if (userInfo.accesskey && userInfo.secretkey) {
       this.qiniu_Mac = new qiniu.auth.digest.Mac(userInfo.accesskey, userInfo.secretkey)
       this.objectService = think.service('object', this.qiniu_Mac)
+    } else {
+      return this.fail(401, '获取key失败')
     }
   }
 

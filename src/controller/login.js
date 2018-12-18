@@ -8,8 +8,6 @@ module.exports = class extends Base {
     if (think.isEmpty(userInfo)) return this.fail('用户不存在')
     if (userInfo.password !== password) return this.fail('密码不正确')
     delete userInfo.password
-    delete userInfo.accesskey
-    delete userInfo.secretkey
     user.where({ name: username }).update({ last_login_time: new Date().getTime() / 1000 })
     const token = await this.session('userInfo', userInfo)
     this.success({token: token, ...userInfo })

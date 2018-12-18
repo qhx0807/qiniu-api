@@ -15,8 +15,8 @@ module.exports = class extends think.Service {
   }
 
   async getObjectList (obj) {
-    const { bucket, limit = 10, prefix, marker } = obj
-    const requestURI = `${this.HostConfig.host_5}/list?bucket=${bucket}&limit=${limit}&prefix=${prefix}&maker=${marker}`
+    const { bucket, limit = 10, prefix = '', marker = '', delimiter = '' } = obj
+    const requestURI = `${this.HostConfig.host_5}/list?bucket=${bucket}&limit=${limit}&prefix=${prefix}&maker=${marker}&delimiter=${delimiter}`
     const AccessToken = qiniu.util.generateAccessToken(this.mac, requestURI)
     try {
       return await this.fetch(requestURI, { headers: { Authorization: AccessToken } }).then(res => res.json())
